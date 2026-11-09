@@ -141,6 +141,23 @@ function importContacts(text, filename) {
   return contacts.map((c) => (c.name ? `${c.phone}, ${c.name}` : c.phone));
 }
 
+// ---------- Google Contacts (People API) ----------
+
+/** Turns People API `connections` into recipient lines ("phone, name"), one per person (mobile number preferred). */
+function contactsFromPeople(people) {
+  const lines = [];
+  for (const p of people || []) {
+    const phones = (p.phoneNumbers || []).filter((n) => n.canonicalForm || n.value);
+    if (!phones.length) continue;
+    const best = phones.find((n) => /mobile|whatsapp/i.test(n.type || '')) || phones.find((n) => n.metadata?.primary) || phones[0];
+    const phone = (best.canonicalForm || best.value).trim();
+    const nm = (p.names || []).find((n) => n.metadata?.primary) || (p.names || [])[0];
+    const name = cleanName(nm?.displayName || [nm?.givenName, nm?.familyName].filter(Boolean).join(' '));
+    lines.push(name ? `${phone}, ${name}` : phone);
+  }
+  return lines;
+}
+
 // ---------- address book & lists ----------
 // book: [{ phone: '919876543210', name: 'Ravi' }] (phone already normalized by parseRecipients)
 // lists: { 'Family': [{ phone, name }, …] } (a snapshot, so removing a contact from the book keeps lists intact)
@@ -167,6 +184,6 @@ function listToLines(contacts) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    parseRecipients, todayKey, parseCsv, contactsFromCsv, contactsFromVcf, importContacts, mergeContacts, listToLines,
+    parseRecipients, todayKey, parseCsv, contactsFromCsv, contactsFromVcf, importContacts, mergeContacts, listToLines, contactsFromPeople,
   };
 }

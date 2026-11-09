@@ -31,6 +31,24 @@ No separate app needed. In the popup, click **Contacts & lists…** to open the 
 
 Everything is stored in this Chrome profile; nothing is uploaded. You can still type or paste numbers straight into the popup instead.
 
+**Sync from Google Contacts** (on the same page) reads the Google account's saved contacts, read-only, and adds any new ones. An Android phone already syncs its contacts to Google, so this picks up numbers saved on the phone. Run it again any time. It only adds contacts: nothing is changed in Google, and contacts deleted in Google stay here until removed. It needs the one-time setup below.
+
+## Google Contacts sync setup (one time, ~15 min)
+The extension has a fixed ID, `kkgmeoaliceagedabneigmibpdponnoe` (set by `key` in `manifest.json`), so this setup works on every laptop.
+
+1. Go to https://console.cloud.google.com and create a project, e.g. *Quick Broadcast*.
+2. **APIs & Services → Library**, search **People API**, then **Enable**.
+3. **Google Auth Platform** (also called *OAuth consent screen*) → **Get started**. Use app name *Quick Broadcast*, your email as support email, **Audience: External**, your email as contact, then agree and **Create**.
+4. **Audience → Test users → Add users**: add the Gmail whose contacts will be synced (e.g. your dad's), plus yours if you want to test.
+5. **Clients → Create client**:
+   - Application type: **Web application**
+   - Authorized redirect URIs → Add URI: `https://kkgmeoaliceagedabneigmibpdponnoe.chromiumapp.org/` (keep the trailing `/`)
+   - **Create**, then copy the **Client ID** (ends in `.apps.googleusercontent.com`).
+6. Paste it into `config.js`: `const GOOGLE_CLIENT_ID = '…apps.googleusercontent.com';`, then commit and push. The Client ID is not a secret, and only the test users from step 4 can use it.
+7. On the laptop: run the update command, reload the extension, then **Contacts & lists… → Sync from Google Contacts**. On first use, Google shows *"Google hasn't verified this app"*. Click **Continue**, which is expected for a personal app in testing. Then allow read access to contacts.
+
+> **Upgrading from 1.0.0:** adding the fixed ID makes Chrome treat this as a new extension, so contacts, lists and the draft saved by 1.0.0 are not carried over. Load or reload it from the same folder, then sync or import again.
+
 ## Use
 1. Open the popup, choose a list under **Send to** (or paste numbers), and write the message (`{name}` gets each contact's name).
 2. **Start**. The WhatsApp Web tab takes over; a small badge bottom-left shows progress and a Pause button.

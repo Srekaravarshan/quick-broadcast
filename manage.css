@@ -19,6 +19,8 @@ h1 { font-size: 22px; margin: 0 0 2px; }
 h2 { font-size: 16px; margin: 0 0 12px; }
 .hint { color: var(--muted); font-size: 13px; font-weight: 400; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-top: 16px; }
+.row.sync { margin: 0 0 12px; align-items: center; }
+.row.sync .hint { flex: 1 1 220px; }
 .drop {
   display: flex; align-items: center; justify-content: center; text-align: center;
   min-height: 90px; padding: 12px; border: 2px dashed var(--line); border-radius: 10px;

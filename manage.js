@@ -1,4 +1,5 @@
-/* global importContacts, parseRecipients, mergeContacts, listToLines */
+/* global importContacts, parseRecipients, mergeContacts, listToLines, contactsFromPeople,
+   googleConfigured, fetchGoogleContacts */
 const $ = (id) => document.getElementById(id);
 const NEW = '__new__';
 
@@ -118,6 +119,35 @@ async function loadFile(file) {
   $('file').value = ''; // allow picking the same file again
 }
 
+async function googleSync() {
+  if (!googleConfigured()) {
+    setStatus('Google sync is not set up yet: the Google client ID is missing in config.js (see "Google Contacts sync setup" in the README). Importing a file works meanwhile.', true);
+    return;
+  }
+  const btn = $('googleSync');
+  btn.disabled = true;
+  btn.textContent = 'Syncing…';
+  setStatus('Waiting for Google sign-in…');
+  try {
+    const people = await fetchGoogleContacts((n) => setStatus(`Reading Google Contacts… ${n} so far`));
+    const lines = contactsFromPeople(people);
+    if (!lines.length) {
+      setStatus(`Google returned ${plural(people.length, 'contact')}, none with a phone number.`, true);
+      return;
+    }
+    await addContacts(lines, 'Google Contacts');
+    await persist({ googleSyncedAt: Date.now() });
+    showLastSync(Date.now());
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sync from Google Contacts';
+  }
+}
+
+function showLastSync(ts) {
+  if (ts) $('googleInfo').textContent = `Last synced ${new Date(ts).toLocaleString()}. Adds new contacts only; nothing is changed in Google.`;
+}
+
 // ---------- list actions ----------
 async function saveList() {
   const name = $('listName').value.trim();
@@ -175,6 +205,7 @@ for (const t of ['dragenter', 'dragover']) drop.addEventListener(t, (e) => { e.p
 for (const t of ['dragleave', 'drop']) drop.addEventListener(t, () => drop.classList.remove('over'));
 drop.addEventListener('drop', guard((e) => { e.preventDefault(); return loadFile(e.dataTransfer.files[0]); }));
 
+$('googleSync').addEventListener('click', guard(googleSync));
 $('addPasted').addEventListener('click', guard(async () => {
   await addContacts($('paste').value.split(/\r?\n/), 'Pasted contacts');
   $('paste').value = '';
@@ -197,7 +228,8 @@ $('deleteList').addEventListener('click', guard(deleteList));
 $('removeContacts').addEventListener('click', guard(removeContacts));
 
 guard(async () => {
-  const s = await chrome.storage.local.get(['book', 'lists', 'draft']);
+  const s = await chrome.storage.local.get(['book', 'lists', 'draft', 'googleSyncedAt']);
+  showLastSync(s.googleSyncedAt);
   book = s.book || [];
   lists = s.lists || {};
   cc = s.draft?.cc || '91';

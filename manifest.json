@@ -1,18 +1,28 @@
 {
   "manifest_version": 3,
   "name": "Quick Broadcast for WhatsApp Web",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Send your own message 1:1 to a list of contacts on WhatsApp Web, with pacing and a daily cap.",
-  "permissions": ["storage"],
-  "host_permissions": ["https://web.whatsapp.com/*"],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw9qUv+tLGI6hX8GGL3C7S2gpXsQEcsOEWYtylxW2LBivfOTkQTwM9F2nwZgPA+AqiXdzA3Q1dA6xK6hxTqmGsLPyRMJQvkKV78Ml4HYr7WMQahYeiSd6vSgxNRDuHLaC95Skei+ghV+W9/l/oJdmo1MpDFB9EmMdr4QdOx2vk+ztxvjsucbMI63HxbI++Y4FNsrvVHn40H5vxfGlZeEL0F/zyNPViHQHU7dN9zESN1pgBN/mWkkeWlxvJhTOGaCaDq+OOshawvxChEA+0VJLF7FO6ZQ4AkhH5cLQWuj36dGMygMNtncA1DKo1BsnX3sytVuXqMLRirBxUsaT/VfDswIDAQAB",
+  "permissions": [
+    "storage",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*"
+  ],
   "action": {
     "default_title": "Quick Broadcast",
     "default_popup": "popup.html"
   },
   "content_scripts": [
     {
-      "matches": ["https://web.whatsapp.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ]

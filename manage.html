@@ -13,6 +13,10 @@
 
     <section class="card">
       <h2>1. Add contacts <span class="hint" id="bookCount"></span></h2>
+      <div class="row sync">
+        <button id="googleSync" type="button" class="primary">Sync from Google Contacts</button>
+        <span id="googleInfo" class="hint">Adds new contacts from your Google account (read-only). Run it again any time to pick up new ones.</span>
+      </div>
       <label id="drop" class="drop" for="file">
         <input id="file" type="file" accept=".csv,.vcf,.txt,text/csv,text/vcard,text/x-vcard">
         <span>Choose or drop a <b>.csv</b> (Google Contacts / Excel) or <b>.vcf</b> (iPhone / Mac) file</span>
@@ -63,6 +67,8 @@
     <p id="status" class="status" hidden></p>
   </main>
   <script src="lib.js"></script>
+  <script src="config.js"></script>
+  <script src="google.js"></script>
   <script src="manage.js"></script>
 </body>
 </html>
