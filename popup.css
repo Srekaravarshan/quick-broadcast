@@ -32,6 +32,15 @@ textarea, input {
   padding: 6px 8px;
 }
 textarea { resize: vertical; }
+select {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
 .labelrow { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
 button.small { flex: 0 0 auto; padding: 3px 8px; font-size: 12px; margin-bottom: 4px; }
 label.check { font-weight: 400; margin-top: 10px; }

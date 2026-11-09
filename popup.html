@@ -9,9 +9,12 @@
   <h1>Quick Broadcast</h1>
 
   <div class="labelrow">
-    <label for="list">Recipients <span class="hint">one per line: <code>9876543210, Ravi</code></span></label>
-    <button id="importBtn" type="button" class="small">Import file…</button>
+    <label for="listSelect">Send to</label>
+    <button id="manageBtn" type="button" class="small">Contacts &amp; lists…</button>
   </div>
+  <select id="listSelect"></select>
+
+  <label for="list">Recipients <span class="hint">one per line: <code>9876543210, Ravi</code></span></label>
   <textarea id="list" rows="6" spellcheck="false" placeholder="9876543210, Ravi&#10;+91 98450 12345, Priya&#10;9123456780"></textarea>
   <div id="parseInfo" class="hint"></div>
 

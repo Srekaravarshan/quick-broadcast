@@ -1,4 +1,4 @@
-/* global parseRecipients, todayKey */
+/* global parseRecipients, todayKey, listToLines */
 const $ = (id) => document.getElementById(id);
 const FIELDS = ['list', 'message', 'cc', 'minDelay', 'maxDelay', 'dailyCap'];
 
@@ -17,7 +17,25 @@ function settings() {
 async function saveDraft() {
   const draft = Object.fromEntries(FIELDS.map((f) => [f, $(f).value]));
   draft.fastMode = $('fastMode').checked;
+  draft.selectedList = $('listSelect').value;
   await chrome.storage.local.set({ draft });
+}
+
+let lists = {};
+
+function renderListSelect(selectedName) {
+  const names = Object.keys(lists).sort((a, b) => a.localeCompare(b));
+  $('listSelect').replaceChildren(
+    new Option(names.length ? 'Typed / pasted numbers below' : 'Typed / pasted numbers below (no saved lists yet)', ''),
+    ...names.map((n) => new Option(`${n} (${lists[n].length})`, n)),
+  );
+  $('listSelect').value = selectedName && lists[selectedName] ? selectedName : '';
+}
+
+function applyList(name) {
+  if (!name || !lists[name]) return;
+  $('list').value = listToLines(lists[name]);
+  updateParseInfo();
 }
 
 function updateParseInfo() {
@@ -34,7 +52,7 @@ function render(job) {
   $('start').textContent = active && job.index > 0 ? 'Resume' : 'Start';
   $('start').disabled = !!job?.running;
   $('pause').disabled = !job?.running;
-  for (const f of ['list', 'message', 'cc', 'importBtn']) $(f).disabled = !!active;
+  for (const f of ['list', 'message', 'cc', 'listSelect']) $(f).disabled = !!active;
   if (!job) return;
 
   const sentItems = job.items.filter((i) => i.status === 'sent');
@@ -43,7 +61,7 @@ function render(job) {
   const pending = job.items.length - job.index;
   $('barFill').style.width = `${(job.index / job.items.length) * 100}%`;
   const today = job.daily?.date === todayKey() ? job.daily.count : 0;
-  $('counts').textContent = `Sent ${sentItems.length} (${fast} fast, ${sentItems.length - fast} via reload) · Failed ${failed.length} · Left ${pending} · Today ${today}/${job.dailyCap}`;
+  $('counts').textContent = `${job.listName ? `List "${job.listName}" · ` : ''}Sent ${sentItems.length} (${fast} fast, ${sentItems.length - fast} via reload) · Failed ${failed.length} · Left ${pending} · Today ${today}/${job.dailyCap}`;
   const status = job.running ? 'Running in the WhatsApp Web tab. You can close this popup.' : (job.note || 'Paused');
   $('note').textContent = job.fastNote ? `${status} ${job.fastNote}` : status;
   if (!job.running) $('fastMode').checked = job.fastMode !== false;
@@ -77,7 +95,7 @@ async function start() {
     const message = $('message').value.trim();
     if (!items.length) return showError('Add at least one valid number.');
     if (!message) return showError('Write a message first.');
-    job = { items, index: 0, message, daily: { date: todayKey(), count: 0 }, nextAt: 0 };
+    job = { items, index: 0, message, daily: { date: todayKey(), count: 0 }, nextAt: 0, listName: $('listSelect').value };
   }
   Object.assign(job, s);
   if (s.fastMode) { job.fastMisses = 0; job.fastNote = ''; }
@@ -117,32 +135,60 @@ async function copyFailed() {
 }
 
 async function init() {
-  const { draft, job } = await chrome.storage.local.get(['draft', 'job']);
+  const store = await chrome.storage.local.get(['draft', 'job', 'lists']);
+  const { draft, job } = store;
+  lists = store.lists || {};
   if (draft) {
     for (const f of FIELDS) if (draft[f] != null) $(f).value = draft[f];
     if (draft.fastMode != null) $('fastMode').checked = draft.fastMode;
   }
+  const active = job && job.index < job.items.length;
+  renderListSelect(active ? job.listName : draft?.selectedList);
+  // Saved lists are the source of truth: refresh the box in case the list was edited since.
+  if (!active) applyList($('listSelect').value);
   if (job) {
     for (const f of ['minDelay', 'maxDelay', 'dailyCap']) $(f).value = job[f];
-    if (job.index < job.items.length) $('message').value = job.message;
+    if (active) $('message').value = job.message;
   }
   updateParseInfo();
   render(job);
 
-  for (const f of FIELDS) $(f).addEventListener('input', () => { saveDraft(); if (f === 'list' || f === 'cc') updateParseInfo(); });
+  for (const f of FIELDS) {
+    $(f).addEventListener('input', () => {
+      if (f === 'list') $('listSelect').value = ''; // hand-edited: no longer exactly a saved list
+      saveDraft();
+      if (f === 'list' || f === 'cc') updateParseInfo();
+    });
+  }
+  $('listSelect').addEventListener('change', () => {
+    const name = $('listSelect').value;
+    if (name) applyList(name);
+    else $('list').value = '';
+    updateParseInfo();
+    saveDraft();
+  });
   $('fastMode').addEventListener('change', saveDraft);
-  // A file picker closes the popup, so importing happens on its own page in a tab.
-  $('importBtn').addEventListener('click', async () => {
+  // A file picker closes the popup, so contacts and lists are managed on their own page in a tab.
+  $('manageBtn').addEventListener('click', async () => {
     await saveDraft();
-    await chrome.tabs.create({ url: chrome.runtime.getURL('import.html') });
+    const name = $('listSelect').value;
+    await chrome.tabs.create({ url: chrome.runtime.getURL(`manage.html${name ? `?list=${encodeURIComponent(name)}` : ''}`) });
   });
   $('start').addEventListener('click', () => start().catch((e) => showError(e.message)));
   $('pause').addEventListener('click', () => pause().catch((e) => showError(e.message)));
   $('reset').addEventListener('click', () => reset().catch((e) => showError(e.message)));
   $('copyFailed').addEventListener('click', () => copyFailed().catch((e) => showError(e.message)));
 
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.job) render(changes.job.newValue);
+  chrome.storage.onChanged.addListener(async (changes, area) => {
+    if (area !== 'local') return;
+    if (changes.job) render(changes.job.newValue);
+    if (changes.lists) {
+      lists = changes.lists.newValue || {};
+      const { job: j } = await chrome.storage.local.get('job');
+      const busy = j && j.index < j.items.length;
+      renderListSelect($('listSelect').value);
+      if (!busy) applyList($('listSelect').value);
+    }
   });
 }
 

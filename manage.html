@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contacts &amp; lists · Quick Broadcast</title>
+  <link rel="stylesheet" href="manage.css">
+</head>
+<body>
+  <main>
+    <h1>Contacts &amp; lists</h1>
+    <p class="hint">Everything stays in this browser. Nothing is uploaded.</p>
+
+    <section class="card">
+      <h2>1. Add contacts <span class="hint" id="bookCount"></span></h2>
+      <label id="drop" class="drop" for="file">
+        <input id="file" type="file" accept=".csv,.vcf,.txt,text/csv,text/vcard,text/x-vcard">
+        <span>Choose or drop a <b>.csv</b> (Google Contacts / Excel) or <b>.vcf</b> (iPhone / Mac) file</span>
+      </label>
+      <details>
+        <summary>…or paste numbers</summary>
+        <textarea id="paste" rows="5" spellcheck="false" placeholder="9876543210, Ravi&#10;+91 98450 12345, Priya"></textarea>
+        <button id="addPasted" type="button">Add pasted contacts</button>
+      </details>
+      <details class="help">
+        <summary>How to export contacts from a phone</summary>
+        <ul>
+          <li><b>Android:</b> contacts usually sync to Google. <a href="https://contacts.google.com" target="_blank" rel="noopener">contacts.google.com</a> → Export → <i>Google CSV</i>.</li>
+          <li><b>iPhone:</b> <a href="https://www.icloud.com/contacts" target="_blank" rel="noopener">icloud.com/contacts</a> (or the Mac Contacts app) → select all → Export vCard.</li>
+          <li><b>Excel:</b> File → Save As → <i>CSV</i>. Needs a phone column; a name column is optional.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>2. Build a list</h2>
+      <div class="row">
+        <label>List
+          <select id="listPick"></select>
+        </label>
+        <label class="grow">Name
+          <input id="listName" type="text" placeholder="e.g. Family">
+        </label>
+      </div>
+
+      <div class="row">
+        <input id="search" class="grow" type="search" placeholder="Search name or number">
+        <button id="selVisible" type="button">Tick shown</button>
+        <button id="clearSel" type="button">Untick all</button>
+      </div>
+      <label class="check"><input id="onlySelected" type="checkbox"> Show only ticked</label>
+      <div id="selCount" class="hint"></div>
+      <div id="contacts" class="contacts" role="list"></div>
+
+      <div class="row buttons">
+        <button id="saveList" type="button" class="primary">Save list</button>
+        <button id="useList" type="button">Use this list in popup</button>
+        <button id="deleteList" type="button" class="danger">Delete list</button>
+        <button id="removeContacts" type="button" class="danger subtle">Remove ticked from contacts</button>
+      </div>
+    </section>
+
+    <p id="status" class="status" hidden></p>
+  </main>
+  <script src="lib.js"></script>
+  <script src="manage.js"></script>
+</body>
+</html>

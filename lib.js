@@ -141,6 +141,32 @@ function importContacts(text, filename) {
   return contacts.map((c) => (c.name ? `${c.phone}, ${c.name}` : c.phone));
 }
 
+// ---------- address book & lists ----------
+// book: [{ phone: '919876543210', name: 'Ravi' }] (phone already normalized by parseRecipients)
+// lists: { 'Family': [{ phone, name }, …] } (a snapshot, so removing a contact from the book keeps lists intact)
+
+const byName = (a, b) => (a.name || '￿').localeCompare(b.name || '￿') || a.phone.localeCompare(b.phone);
+
+/** Merge parsed recipients into the address book; fills in missing names, never overwrites one. */
+function mergeContacts(book, items) {
+  const map = new Map(book.map((c) => [c.phone, { phone: c.phone, name: c.name || '' }]));
+  let added = 0;
+  let updated = 0;
+  for (const it of items) {
+    const existing = map.get(it.phone);
+    if (!existing) { map.set(it.phone, { phone: it.phone, name: it.name || '' }); added++; }
+    else if (!existing.name && it.name) { existing.name = it.name; updated++; }
+  }
+  return { book: [...map.values()].sort(byName), added, updated };
+}
+
+/** Recipient lines ("phone, name") for the popup's Recipients box. */
+function listToLines(contacts) {
+  return (contacts || []).map((c) => (c.name ? `${c.phone}, ${c.name}` : c.phone)).join('\n');
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { parseRecipients, todayKey, parseCsv, contactsFromCsv, contactsFromVcf, importContacts };
+  module.exports = {
+    parseRecipients, todayKey, parseCsv, contactsFromCsv, contactsFromVcf, importContacts, mergeContacts, listToLines,
+  };
 }

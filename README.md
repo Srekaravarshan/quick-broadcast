@@ -21,15 +21,18 @@ After an update, click the reload icon on the extension's card in `chrome://exte
 2. **Load unpacked** → pick the `quick-broadcast` folder in your home folder
 3. Pin the extension; log in to https://web.whatsapp.com once (QR scan)
 
-## Contact list
-No separate app needed. The list is pasted into the extension popup's **Recipients** box, one per line (`9876543210, Ravi`), and Chrome remembers it.
-Keep the master list anywhere you like (Notes, a text file, Google Sheets, Excel) and copy-paste it in.
-**Import file…** (button in the popup) opens an import page. Pick or drop a `.csv` file (Google Contacts export, Excel "Save as CSV", or any sheet with a phone column) or a `.vcf` file (iPhone or Mac Contacts export). You can review and edit the list there, then choose replace or add. The file is read locally and never uploaded.
-- Android: https://contacts.google.com → Export → Google CSV
-- iPhone: icloud.com/contacts (or Mac Contacts) → select all → Export vCard
+## Contacts & lists
+No separate app needed. In the popup, click **Contacts & lists…** to open the manager page:
+1. **Add contacts** once: drop a `.csv` file (Google Contacts export, Excel "Save as CSV", or any sheet with a phone column) or a `.vcf` file (iPhone or Mac Contacts export), or paste numbers. Duplicates are merged.
+   - Android: https://contacts.google.com → Export → Google CSV
+   - iPhone: icloud.com/contacts (or Mac Contacts) → select all → Export vCard
+2. **Build lists**: search, tick the contacts, give the list a name (e.g. *Family*), and click **Save list**. You can edit, rename or delete lists later.
+3. In the popup, choose the list under **Send to**. Only those contacts get the message.
+
+Everything is stored in this Chrome profile; nothing is uploaded. You can still type or paste numbers straight into the popup instead.
 
 ## Use
-1. Open the popup, paste recipients (one per line: `9876543210, Ravi`), write the message (`{name}` gets the name).
+1. Open the popup, choose a list under **Send to** (or paste numbers), and write the message (`{name}` gets each contact's name).
 2. **Start**. The WhatsApp Web tab takes over; a small badge bottom-left shows progress and a Pause button.
 3. Leave the tab open (ideally visible: Chrome slows timers in background tabs, so it just runs slower).
 4. Failed numbers (not on WhatsApp, chat didn't open) are listed in the popup with a **Copy failed numbers** button.
