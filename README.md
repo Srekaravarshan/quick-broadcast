@@ -3,23 +3,28 @@
 Sends your own message as a normal 1:1 chat to each number in a list, one at a time, through WhatsApp Web.
 
 ## Install
-**1. Download** (one command, no Git needed)
+**1. Download or update** (one command, no Git needed; the same command installs and updates)
 
 Mac (Terminal):
 ```bash
-curl -fsSL https://github.com/Srekaravarshan/quick-broadcast/archive/refs/heads/main.zip -o /tmp/qb.zip && rm -rf ~/quick-broadcast && unzip -q /tmp/qb.zip -d /tmp/qb && mv /tmp/qb/quick-broadcast-main ~/quick-broadcast && rm -rf /tmp/qb /tmp/qb.zip && open ~/quick-broadcast
+curl -fsSL https://raw.githubusercontent.com/Srekaravarshan/quick-broadcast/main/install.sh | bash
 ```
 
 Windows (PowerShell):
 ```powershell
-$z="$env:TEMP\qb.zip"; iwr https://github.com/Srekaravarshan/quick-broadcast/archive/refs/heads/main.zip -OutFile $z; Remove-Item "$HOME\quick-broadcast" -Recurse -Force -EA 0; Expand-Archive $z $env:TEMP\qb -Force; Move-Item "$env:TEMP\qb\quick-broadcast-main" "$HOME\quick-broadcast"; Remove-Item $z,"$env:TEMP\qb" -Recurse -Force; ii "$HOME\quick-broadcast"
+irm https://raw.githubusercontent.com/Srekaravarshan/quick-broadcast/main/install.ps1 | iex
 ```
-Running the same command again updates to the latest version (then click the reload icon on the extension card).
+After an update, click the reload icon on the extension's card in `chrome://extensions`. Contact lists and progress are kept (they're stored in Chrome, not in this folder).
 
 **2. Add to Chrome**
 1. Open `chrome://extensions` → turn on **Developer mode** (top right)
 2. **Load unpacked** → pick the `quick-broadcast` folder in your home folder
 3. Pin the extension; log in to https://web.whatsapp.com once (QR scan)
+
+## Contact list
+No separate app needed. The list is pasted into the extension popup's **Recipients** box, one per line (`9876543210, Ravi`), and Chrome remembers it.
+Keep the master list anywhere you like (Notes, a text file, Google Sheets, Excel) and copy-paste it in.
+To pull numbers from your phone's contacts: export from https://contacts.google.com (Export → Google CSV), open it in Sheets/Excel, and copy the name and phone columns.
 
 ## Use
 1. Open the popup, paste recipients (one per line: `9876543210, Ravi`), write the message (`{name}` gets the name).
