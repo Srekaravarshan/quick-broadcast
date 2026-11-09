@@ -24,7 +24,9 @@ After an update, click the reload icon on the extension's card in `chrome://exte
 ## Contact list
 No separate app needed. The list is pasted into the extension popup's **Recipients** box, one per line (`9876543210, Ravi`), and Chrome remembers it.
 Keep the master list anywhere you like (Notes, a text file, Google Sheets, Excel) and copy-paste it in.
-To pull numbers from your phone's contacts: export from https://contacts.google.com (Export → Google CSV), open it in Sheets/Excel, and copy the name and phone columns.
+**Import file…** (button in the popup) opens an import page. Pick or drop a `.csv` file (Google Contacts export, Excel "Save as CSV", or any sheet with a phone column) or a `.vcf` file (iPhone or Mac Contacts export). You can review and edit the list there, then choose replace or add. The file is read locally and never uploaded.
+- Android: https://contacts.google.com → Export → Google CSV
+- iPhone: icloud.com/contacts (or Mac Contacts) → select all → Export vCard
 
 ## Use
 1. Open the popup, paste recipients (one per line: `9876543210, Ravi`), write the message (`{name}` gets the name).

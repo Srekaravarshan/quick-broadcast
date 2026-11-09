@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Import contacts · Quick Broadcast</title>
+  <link rel="stylesheet" href="import.css">
+</head>
+<body>
+  <main>
+    <h1>Import contacts</h1>
+    <p class="hint">Pick or drop a <b>.csv</b> (Google Contacts export, Excel “Save as CSV”, any sheet with a phone column) or a <b>.vcf</b> (iPhone / Mac Contacts export). The file is read only in this browser and isn’t uploaded anywhere.</p>
+
+    <label id="drop" class="drop" for="file">
+      <input id="file" type="file" accept=".csv,.vcf,.txt,text/csv,text/vcard,text/x-vcard">
+      <span id="dropText">Click to choose a file, or drop it here</span>
+    </label>
+
+    <section id="result" hidden>
+      <p id="summary"></p>
+      <textarea id="preview" rows="12" spellcheck="false"></textarea>
+      <p class="hint">You can edit or delete lines above before adding them. Numbers without a country code get <span id="ccShow"></span> added.</p>
+      <div class="buttons">
+        <button id="replace" type="button" class="primary">Replace current list</button>
+        <button id="append" type="button">Add to current list</button>
+      </div>
+    </section>
+
+    <p id="status" class="status" hidden></p>
+
+    <details class="help">
+      <summary>How to export contacts from a phone</summary>
+      <ul>
+        <li><b>Android:</b> contacts usually sync to Google. Open <a href="https://contacts.google.com" target="_blank" rel="noopener">contacts.google.com</a> → Export → <i>Google CSV</i>.</li>
+        <li><b>iPhone:</b> on a Mac, Contacts app → select all → File → Export → <i>Export vCard</i>. Or on <a href="https://www.icloud.com/contacts" target="_blank" rel="noopener">icloud.com/contacts</a> → select all → Export vCard.</li>
+        <li><b>Excel:</b> File → Save As → <i>CSV (Comma delimited)</i>. Needs a column with the phone numbers; a name column is optional.</li>
+      </ul>
+    </details>
+  </main>
+  <script src="lib.js"></script>
+  <script src="import.js"></script>
+</body>
+</html>

@@ -32,6 +32,8 @@ textarea, input {
   padding: 6px 8px;
 }
 textarea { resize: vertical; }
+.labelrow { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+button.small { flex: 0 0 auto; padding: 3px 8px; font-size: 12px; margin-bottom: 4px; }
 label.check { font-weight: 400; margin-top: 10px; }
 label.check input { width: auto; margin: 0 6px 0 0; vertical-align: -2px; }
 .row { display: flex; gap: 8px; }

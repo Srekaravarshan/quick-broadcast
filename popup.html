@@ -8,7 +8,10 @@
 <body>
   <h1>Quick Broadcast</h1>
 
-  <label for="list">Recipients <span class="hint">one per line: <code>9876543210, Ravi</code></span></label>
+  <div class="labelrow">
+    <label for="list">Recipients <span class="hint">one per line: <code>9876543210, Ravi</code></span></label>
+    <button id="importBtn" type="button" class="small">Import file…</button>
+  </div>
   <textarea id="list" rows="6" spellcheck="false" placeholder="9876543210, Ravi&#10;+91 98450 12345, Priya&#10;9123456780"></textarea>
   <div id="parseInfo" class="hint"></div>
 

@@ -34,7 +34,7 @@ function render(job) {
   $('start').textContent = active && job.index > 0 ? 'Resume' : 'Start';
   $('start').disabled = !!job?.running;
   $('pause').disabled = !job?.running;
-  for (const f of ['list', 'message', 'cc']) $(f).disabled = !!active;
+  for (const f of ['list', 'message', 'cc', 'importBtn']) $(f).disabled = !!active;
   if (!job) return;
 
   const sentItems = job.items.filter((i) => i.status === 'sent');
@@ -131,6 +131,11 @@ async function init() {
 
   for (const f of FIELDS) $(f).addEventListener('input', () => { saveDraft(); if (f === 'list' || f === 'cc') updateParseInfo(); });
   $('fastMode').addEventListener('change', saveDraft);
+  // A file picker closes the popup, so importing happens on its own page in a tab.
+  $('importBtn').addEventListener('click', async () => {
+    await saveDraft();
+    await chrome.tabs.create({ url: chrome.runtime.getURL('import.html') });
+  });
   $('start').addEventListener('click', () => start().catch((e) => showError(e.message)));
   $('pause').addEventListener('click', () => pause().catch((e) => showError(e.message)));
   $('reset').addEventListener('click', () => reset().catch((e) => showError(e.message)));
