@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Quick Broadcast for WhatsApp Web",
+  "version": "1.0.0",
+  "description": "Send your own message 1:1 to a list of contacts on WhatsApp Web, with pacing and a daily cap.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://web.whatsapp.com/*"],
+  "action": {
+    "default_title": "Quick Broadcast",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
